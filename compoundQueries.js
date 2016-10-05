@@ -1,5 +1,8 @@
 'use strict';
 
+const add = Symbol('add');
+const boolQuery = Symbol('boolQuery');
+
 /** Class representing an Elasticsearch bool query.*/
 class BoolQuery {
   /**
@@ -8,7 +11,7 @@ class BoolQuery {
    *
    */
   constructor () {
-    this._boolQuery = {};
+    this[boolQuery] = {};
   }
 
   /**
@@ -18,17 +21,18 @@ class BoolQuery {
    * @param {string} type
    * @param {Object} query
    */
-  _add (type, query) {
-    if (!this._boolQuery[type]) {
+  [add] (type, query) {
+    if (!this[boolQuery][type]) {
       // a) in case not exist it is created
-      this._boolQuery[type] = query;
-    } else if (Array.isArray(this._boolQuery[type])) {
+      this[boolQuery][type] = query;
+    } else if (Array.isArray(this[boolQuery][type])) {
       // b) in case of array it is pushed
-      this._boolQuery[type].push(query);
+      this[boolQuery][type].push(query);
     } else {
       // c) in case it is an object it is converted into an array and pushed
-      this._boolQuery[type] = [this._boolQuery[type], query];
+      this[boolQuery][type] = this[boolQuery][type];
     }
+    return this;
   }
 
   /**
@@ -37,8 +41,7 @@ class BoolQuery {
    * @param {Object} query
    */
   must (query) {
-    this._add('must', query);
-    return this;
+    return this[add]('must', query);
   }
 
   /**
@@ -47,8 +50,7 @@ class BoolQuery {
    * @param {Object} query
    */
   mustNot (query) {
-    this._add('must_not', query);
-    return this;
+    return this[add]('must_not', query);
   }
 
   /**
@@ -57,8 +59,7 @@ class BoolQuery {
    * @param {Object} query
    */
   should (query) {
-    this._add('should', query);
-    return this;
+    return this[add]('should', query);
   }
 
   /**
@@ -67,17 +68,16 @@ class BoolQuery {
    * @param {Object} query
    */
   filter (query) {
-    this._add('filter', query);
-    return this;
+    return this[add]('filter', query);
   }
 
   /**
-   * Get bool query
+   * Getter for built bool query
    * @return complete bool query cloned
    */
-  build () {
+  get built () {
     const completeBoolQuery = {
-      bool: this._boolQuery
+      bool: this[boolQuery]
     };
     return JSON.parse(JSON.stringify(completeBoolQuery));
   }

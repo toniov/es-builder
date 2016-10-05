@@ -14,7 +14,7 @@ npm install es-builder
 
 - No production dependencies
 - Chainable methods
-- `build()` method returns each time a copy of the object so it can be safely passed to foreign code
+- `built` getter method returns each time a copy of the object so it can be safely passed to foreign code
 
 # Usage
 
@@ -27,7 +27,7 @@ qb.query(leafQueries.termQuery('name', 'Kirby'))
   .query(leafQueries.matchQuery('description', 'Pink, fluffy and very hungry'))
   .queryMustNot(leafQueries.termQuery('name', 'Waddle Dee'));
 
-const query = qb.build();
+const query = qb.built;
 // {
 //   bool: {
 //     must: [{
@@ -55,7 +55,7 @@ Adding clauses to filter context is possible as well:
 ```js
 qb.filter(leafQueries.termQuery('name', 'Kirby'));
 
-const query = qb.build();
+const query = qb.built;
 // {
 //   bool: {
 //     filter: {
@@ -119,8 +119,8 @@ qb.filter(Q('terms', 'name', ['Kirby', 'Metaknight'])).filter(Q('exists', 'age')
 const boolQuery = new compoundQueries.BoolQuery();
 boolQuery.should(Q('range', 'age', 20, 25)).should(Q('prefix', 'surname', 'Pi'));
 
-qb.filter(boolQuery.build());
-const query = qb.build();
+qb.filter(boolQuery.built);
+const query = qb.built;
 // {
 //   bool: {
 //     filter: {

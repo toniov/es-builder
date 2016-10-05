@@ -8,12 +8,12 @@ const BoolQuery = qb.compoundQueries.BoolQuery;
 
 describe('QueryBuilder', () => {
   it('should build empty query', () => {
-    const query = new QueryBuilder().build();
+    const query = new QueryBuilder().built;
     expect(query).to.eql({ bool: {} });
   });
 
   it('should add must query', () => {
-    const query = new QueryBuilder().query({}).build();
+    const query = new QueryBuilder().query({}).built;
     expect(query).to.eql({
       bool: {
         must: {}
@@ -22,7 +22,7 @@ describe('QueryBuilder', () => {
   });
 
   it('should add must not query', () => {
-    const query = new QueryBuilder().queryMustNot({}).build();
+    const query = new QueryBuilder().queryMustNot({}).built;
     expect(query).to.eql({
       bool: {
         must_not: {}
@@ -31,7 +31,7 @@ describe('QueryBuilder', () => {
   });
 
   it('should add should query', () => {
-    const query = new QueryBuilder().queryShould({}).build();
+    const query = new QueryBuilder().queryShould({}).built;
     expect(query).to.eql({
       bool: {
         should: {}
@@ -40,7 +40,7 @@ describe('QueryBuilder', () => {
   });
 
   it('should add filter must query', () => {
-    const query = new QueryBuilder().filter({}).build();
+    const query = new QueryBuilder().filter({}).built;
     expect(query).to.eql({
       bool: {
         filter: {
@@ -53,7 +53,7 @@ describe('QueryBuilder', () => {
   });
 
   it('should add filter must not query', () => {
-    const query = new QueryBuilder().filterMustNot({}).build();
+    const query = new QueryBuilder().filterMustNot({}).built;
     expect(query).to.eql({
       bool: {
         filter: {
@@ -66,7 +66,7 @@ describe('QueryBuilder', () => {
   });
 
   it('should add filter should query', () => {
-    const query = new QueryBuilder().filterShould({}).build();
+    const query = new QueryBuilder().filterShould({}).built;
     expect(query).to.eql({
       bool: {
         filter: {
@@ -79,16 +79,16 @@ describe('QueryBuilder', () => {
   });
 
   it('should call aliases correctly', () => {
-    let query = new QueryBuilder().query({}).build();
-    let queryAlias = new QueryBuilder().queryAnd({}).build();
+    let query = new QueryBuilder().query({}).built;
+    let queryAlias = new QueryBuilder().queryAnd({}).built;
     expect(query).to.eql(queryAlias);
 
-    query = new QueryBuilder().queryMustNot({}).build();
-    queryAlias = new QueryBuilder().queryMustNot({}).build();
+    query = new QueryBuilder().queryMustNot({}).built;
+    queryAlias = new QueryBuilder().queryMustNot({}).built;
     expect(query).to.eql(queryAlias);
 
-    query = new QueryBuilder().queryShould({}).build();
-    queryAlias = new QueryBuilder().queryOr({}).build();
+    query = new QueryBuilder().queryShould({}).built;
+    queryAlias = new QueryBuilder().queryOr({}).built;
     expect(query).to.eql(queryAlias);
   });
 });
@@ -219,12 +219,12 @@ describe('leafQueries', () => {
 
 describe('compoundQueries', () => {
   it('should build empty bool query', () => {
-    const query = new BoolQuery().build();
+    const query = new BoolQuery().built;
     expect(query).to.eql({ bool: {} });
   });
 
   it('should add must to bool query', () => {
-    const query = new BoolQuery().must({}).build();
+    const query = new BoolQuery().must({}).built;
     expect(query).to.eql({
       bool: {
         must: {}
@@ -233,7 +233,7 @@ describe('compoundQueries', () => {
   });
 
   it('should add must not to bool query', () => {
-    const query = new BoolQuery().mustNot({}).build();
+    const query = new BoolQuery().mustNot({}).built;
     expect(query).to.eql({
       bool: {
         must_not: {}
@@ -242,7 +242,7 @@ describe('compoundQueries', () => {
   });
 
   it('should add should to bool query', () => {
-    const query = new BoolQuery().should({}).build();
+    const query = new BoolQuery().should({}).built;
     expect(query).to.eql({
       bool: {
         should: {}
@@ -251,16 +251,16 @@ describe('compoundQueries', () => {
   });
 
   it('should call aliases correctly', () => {
-    let query = new BoolQuery().must({}).build();
-    let queryAlias = new BoolQuery().and({}).build();
+    let query = new BoolQuery().must({}).built;
+    let queryAlias = new BoolQuery().and({}).built;
     expect(query).to.eql(queryAlias);
 
-    query = new BoolQuery().mustNot({}).build();
-    queryAlias = new BoolQuery().not({}).build();
+    query = new BoolQuery().mustNot({}).built;
+    queryAlias = new BoolQuery().not({}).built;
     expect(query).to.eql(queryAlias);
 
-    query = new BoolQuery().should({}).build();
-    queryAlias = new BoolQuery().or({}).build();
+    query = new BoolQuery().should({}).built;
+    queryAlias = new BoolQuery().or({}).built;
     expect(query).to.eql(queryAlias);
   });
 });

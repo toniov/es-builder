@@ -1,6 +1,8 @@
 'use strict';
 
 const BoolQuery = require('./compoundQueries').BoolQuery;
+const boolQueryInstance = Symbol('boolQueryInstance');
+const boolQueryInstanceForFilter = Symbol('boolQueryInstanceForFilter');
 
 /** Class representing a query builder.*/
 class QueryBuilder {
@@ -10,8 +12,8 @@ class QueryBuilder {
    *
    */
   constructor () {
-    this._boolQueryInstance = new BoolQuery();
-    this._boolQueryInstanceForFilter = new BoolQuery();
+    this[boolQueryInstance] = new BoolQuery();
+    this[boolQueryInstanceForFilter] = new BoolQuery();
   }
 
   /**
@@ -20,7 +22,7 @@ class QueryBuilder {
    * @param {Object} query
    */
   query (query) {
-    this._boolQueryInstance.must(query);
+    this[boolQueryInstance].must(query);
     return this;
   }
 
@@ -30,7 +32,7 @@ class QueryBuilder {
    * @param {Object} query
    */
   queryMustNot (query) {
-    this._boolQueryInstance.mustNot(query);
+    this[boolQueryInstance].mustNot(query);
     return this;
   }
 
@@ -40,7 +42,7 @@ class QueryBuilder {
    * @param {Object} query
    */
   queryShould (query) {
-    this._boolQueryInstance.should(query);
+    this[boolQueryInstance].should(query);
     return this;
   }
 
@@ -50,7 +52,7 @@ class QueryBuilder {
    * @param {Object} query
    */
   filter (query) {
-    this._boolQueryInstanceForFilter.must(query);
+    this[boolQueryInstanceForFilter].must(query);
     return this;
   }
 
@@ -60,7 +62,7 @@ class QueryBuilder {
    * @param {Object} query
    */
   filterMustNot (query) {
-    this._boolQueryInstanceForFilter.mustNot(query);
+    this[boolQueryInstanceForFilter].mustNot(query);
     return this;
   }
 
@@ -70,18 +72,18 @@ class QueryBuilder {
    * @param {Object} query
    */
   filterShould (query) {
-    this._boolQueryInstanceForFilter.should(query);
+    this[boolQueryInstanceForFilter].should(query);
     return this;
   }
 
   /**
-   * Get the full query that will be passed to the search API
+   * Getter for the full query that will be passed to the search API
    * @return complete query cloned
    */
-  build () {
-    const completeQuery = this._boolQueryInstance.build();
+  get built () {
+    const completeQuery = this[boolQueryInstance].built;
     // add filter clause only in case filters were added
-    const filterBool = this._boolQueryInstanceForFilter.build();
+    const filterBool = this[boolQueryInstanceForFilter].built;
     if (Object.keys(filterBool.bool).length > 0) {
       completeQuery.bool.filter = filterBool;
     }
