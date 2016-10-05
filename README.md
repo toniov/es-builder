@@ -112,15 +112,15 @@ const QueryBuilder = require('./es-builder').QueryBuilder;
 const compoundQueries = require('./es-builder').compoundQueries;
 const Q = require('./es-builder').leafQueries.shortcut;
 
-const qs = new QueryBuilder();
+const qb = new QueryBuilder();
 
-qs.filter(Q('terms', 'name', ['Kirby', 'Metaknight'])).filter(Q('exists', 'age'));
+qb.filter(Q('terms', 'name', ['Kirby', 'Metaknight'])).filter(Q('exists', 'age'));
 
 const boolQuery = new compoundQueries.BoolQuery();
 boolQuery.should(Q('range', 'age', 20, 25)).should(Q('prefix', 'surname', 'Pi'));
 
-qs.filter(boolQuery.build());
-const query = qs.build();
+qb.filter(boolQuery.build());
+const query = qb.build();
 // {
 //   bool: {
 //     filter: {
@@ -156,12 +156,12 @@ const query = qs.build();
 
 There are aliases available for some methods:
 
-`qs.query()` → `qs.queryAnd()`
-`qs.queryMustNot()` → `qs.queryNot()`
-`qs.queryShould()` → `qs.queryOr()`
-`qs.filter()` → `qs.filterAnd()`
-`qs.filterMustNot()` → `qs.filterNot()`
-`qs.filterShould()` → `qs.filterOr()`
+`qb.query()` → `qb.queryAnd()`
+`qb.queryMustNot()` → `qb.queryNot()`
+`qb.queryShould()` → `qb.queryOr()`
+`qb.filter()` → `qb.filterAnd()`
+`qb.filterMustNot()` → `qb.filterNot()`
+`qb.filterShould()` → `qb.filterOr()`
 
 `boolQuery.must()` → `boolQuery.and()`
 `boolQuery.mustNot()` → `boolQuery.not()`
