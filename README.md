@@ -103,11 +103,11 @@ There is a shortcut available for leaf queries, inspired by [elasticsearch-dsl-p
 }
 ```
 
-Also, there is a one-to-one mapping between the raw query and its equivalent in the DSL therefore adding directly raw queries is ok.
+Also, there is a one-to-one mapping between the raw query and its equivalent in the DSL, therefore adding directly raw queries is ok.
 
 ## Complex queries
 
-Combined queries can be built as well nesting compound queries.
+Combined queries can be built nesting compound queries.
 
 ```js
 const QueryBuilder = require('./es-builder').QueryBuilder;
@@ -156,18 +156,20 @@ const query = qb.built;
 
 ## Aliases
 
-There are aliases available for some methods:
+There are aliases available for some methods.
 
-`qb.query()` → `qb.queryAnd()`
-`qb.queryMustNot()` → `qb.queryNot()`
-`qb.queryShould()` → `qb.queryOr()`
-`qb.filter()` → `qb.filterAnd()`
-`qb.filterMustNot()` → `qb.filterNot()`
-`qb.filterShould()` → `qb.filterOr()`
+`const qb = new QueryBuilder();`
+- `qb.query()` → `qb.queryAnd()`
+- `qb.queryMustNot()` → `qb.queryNot()`
+- `qb.queryShould()` → `qb.queryOr()`
+- `qb.filter()` → `qb.filterAnd()`
+- `qb.filterMustNot()` → `qb.filterNot()`
+- `qb.filterShould()` → `qb.filterOr()`
 
-`boolQuery.must()` → `boolQuery.and()`
-`boolQuery.mustNot()` → `boolQuery.not()`
-`boolQuery.should()` → `boolQuery.or()`
+`const boolQuery = new compoundQueries.BoolQuery();`
+- `boolQuery.must()` → `boolQuery.and()`
+- `boolQuery.mustNot()` → `boolQuery.not()`
+- `boolQuery.should()` → `boolQuery.or()`
 
 # API
 
@@ -177,8 +179,8 @@ At the moment you can take a look to the tests to see how all the methods work.
 
 # Compatibility
 
-- At the moment only compatible with Elasticsearch 2.x search API
-- ES2015/2016 usage, not available for old versions of Node.js
+- Only compatible with Elasticsearch 2.x search API
+- ES2015 usage, not available for old versions of Node.js
 
 # ToDo List
 
