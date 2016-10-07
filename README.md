@@ -21,8 +21,8 @@ npm install es-builder
 # Usage
 
 ```js
-const QueryBuilder = require('./es-builder').QueryBuilder;
-const leafQueries = require('./es-builder').leafQueries;
+const QueryBuilder = require('es-builder').QueryBuilder;
+const leafQueries = require('.es-builder').leafQueries;
 
 const qb = new QueryBuilder();
 qb.query(leafQueries.termQuery('name', 'Kirby'))
@@ -110,9 +110,9 @@ Also, there is a one-to-one mapping between the raw query and its equivalent in 
 Combined queries can be built nesting compound queries.
 
 ```js
-const QueryBuilder = require('./es-builder').QueryBuilder;
-const compoundQueries = require('./es-builder').compoundQueries;
-const Q = require('./es-builder').leafQueries.shortcut;
+const QueryBuilder = require('es-builder').QueryBuilder;
+const compoundQueries = require('es-builder').compoundQueries;
+const Q = require('es-builder').leafQueries.shortcut;
 
 const qb = new QueryBuilder();
 

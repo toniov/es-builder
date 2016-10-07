@@ -17,6 +17,10 @@
   ],
   "author": "Antonio Valverde",
   "license": "ISC",
+  "repository": "antonvs2/es-builder",
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "devDependencies": {
     "chai": "3.5.0",
     "mocha": "^3.1.0"
