@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const qb = require('../');
+const qb = require('../src');
 const QueryBuilder = qb.QueryBuilder;
 const leafQueries = qb.leafQueries;
 const BoolQuery = qb.compoundQueries.BoolQuery;

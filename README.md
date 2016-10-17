@@ -4,7 +4,9 @@
 
 Elasticsearch query builder for Node.js, build compatible queries with the Elasticsearch 2.x DSL. Because creating complex queries using the Query DSL is a pain.
 
-It just build the `query` element within the search request body, this means that parameters like `size` or `from` must be added separately, as well as the likes of `sort`.
+It just builds the `query` element within the search request body, the complex part. This means that fields like `size` or `from` must be added separately, as well as the likes of `sort`.
+
+[Info about Search parameters.](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-body.html#_parameters_4)
 
 # Install
 
@@ -89,9 +91,9 @@ NOTE: The above query is quite simple, so using the Query DSL directly it could 
 
 The query being executed is not going to change, therefore using this utility becomes long for the sake of keeping the code as simple as possible.
 
-## Shortcut for leaf queries
+## Shortcut for leaf query clauses
 
-There is a shortcut available for leaf queries, inspired by [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py)
+There is a shortcut available for leaf query clauses, inspired by [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py)
 
 `Q('terms', 'name', ['Kirby', 'Metaknight'])` and `termsQuery('name', ['Kirby', 'Metaknight'])` give the same result:
 
@@ -107,7 +109,7 @@ Also, there is a one-to-one mapping between the raw query and its equivalent in 
 
 ## Complex queries
 
-Combined queries can be built nesting compound queries.
+Combined queries can be built nesting compound query clauses.
 
 ```js
 const QueryBuilder = require('es-builder').QueryBuilder;
@@ -179,17 +181,17 @@ At the moment you can take a look to the tests to see how all the methods work.
 
 # Compatibility
 
-- Only compatible with Elasticsearch 2.x search API
-- ES2015 usage, not available for old versions of Node.js
+- Compatible with Elasticsearch 2.x search API
+- It has been transpiled to ES5 using [Babel](https://babeljs.io/), so it is compatible with old Node.js versions (> 0.12.0)
 
 # ToDo List
 
-- Leaf queries like `multi_match` or `fuzzy`
+- Leaf query clauses like `multi_match` or `fuzzy`
+- Allow passing array of filter objects in compound queries
 - Compound queries like `constant_score` or `dis_max`
-- Possibility to pass some options to leaf queries (like `boost`)
-- Transpile to ES5 to make it compatible with old versions
+- Possibility to pass some options to leaf query clauses (like `boost`)
 - REPL
 - Browser compatible
 - And more
 
-Pull requests or any comments are welcome.
+Pull requests or any comments are more than welcome.
