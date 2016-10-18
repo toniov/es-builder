@@ -30,7 +30,7 @@ class BoolQuery {
       this[boolQuery][type].push(query);
     } else {
       // c) in case it is an object it is converted into an array and pushed
-      this[boolQuery][type] = this[boolQuery][type];
+      this[boolQuery][type] = [this[boolQuery][type], query];
     }
     return this;
   }
