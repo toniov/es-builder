@@ -23,15 +23,14 @@ npm install es-builder
 # Usage
 
 ```js
-const QueryBuilder = require('es-builder').QueryBuilder;
-const leafQueries = require('.es-builder').leafQueries;
+const eb = require('es-builder');
 
-const qb = new QueryBuilder();
-qb.query(leafQueries.termQuery('name', 'Kirby'))
-  .query(leafQueries.matchQuery('description', 'Pink, fluffy and very hungry'))
-  .queryMustNot(leafQueries.termQuery('name', 'Waddle Dee'));
+const queryBuilder = new QueryBuilder()
+  .query(eb.TermQuery('name', 'Kirby'))
+  .query(eb.MatchQuery('description', 'Pink, fluffy and very hungry'))
+  .queryMustNot(eb.TermQuery('name', 'Waddle Dee'));
 
-const query = qb.built;
+const builtQuery = queryBuilder.built;
 // {
 //   bool: {
 //     must: [{
@@ -57,9 +56,9 @@ const query = qb.built;
 Adding clauses to filter context is possible as well:
 
 ```js
-qb.filter(leafQueries.termQuery('name', 'Kirby'));
+queryBuilder.filter(eb.TermQuery('name', 'Kirby'));
 
-const query = qb.built;
+const builtQuery = queryBuilder.built;
 // {
 //   bool: {
 //     filter: {
@@ -89,42 +88,54 @@ NOTE: The above query is quite simple, so using the Query DSL directly it could 
 }
 ```
 
-The query being executed is not going to change, therefore using this utility becomes long for the sake of keeping the code as simple as possible.
+To Elasticsearch both of them are the same, therefore using this utility, the resultant JSON becomes longer for the sake of keeping the code as simple as possible.
 
 ## Shortcut for leaf query clauses
 
 There is a shortcut available for leaf query clauses, inspired by [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py)
 
-`Q('terms', 'name', ['Kirby', 'Metaknight'])` and `termsQuery('name', ['Kirby', 'Metaknight'])` give the same result:
-
 ```js
-{
-  terms: {
-    name: ['Kirby', 'Metaknight']
-  }
-}
+const Q = eb.Q;
+
+// doing this
+Q('terms', 'name', ['Kirby', 'Metaknight']);
+// equals
+eb.TermsQuery('name', ['Kirby', 'Metaknight'])
+
+// both giving the same result:
+// {
+//  terms: {
+//    name: ['Kirby', 'Metaknight']
+//  }
+// }
 ```
 
-Also, there is a one-to-one mapping between the raw query and its equivalent in the DSL, therefore adding directly raw queries is ok.
+Also, there is a one-to-one mapping relation between the raw query and its equivalent in the DSL, therefore adding directly raw queries as Javascript objects is fine.
 
 ## Complex queries
 
 Combined queries can be built nesting compound query clauses.
 
 ```js
-const QueryBuilder = require('es-builder').QueryBuilder;
-const compoundQueries = require('es-builder').compoundQueries;
-const Q = require('es-builder').leafQueries.shortcut;
+const eb = require('es-builder');
+const Q = eb.Q;
 
-const qb = new QueryBuilder();
+const queryBuilder = new eb.QueryBuilder();
+// add a couple of filters
+queryBuilder
+  .filter(Q('terms', 'name', ['Kirby', 'Metaknight']))
+  .filter(Q('exists', 'age'));
 
-qb.filter(Q('terms', 'name', ['Kirby', 'Metaknight'])).filter(Q('exists', 'age'));
+// create a bool compound query
+const builtBoolQuery = new eb.BoolQuery()
+  .should(Q('range', 'age', 20, 25))
+  .should(Q('prefix', 'surname', 'Pi'))
+  .built;
 
-const boolQuery = new compoundQueries.BoolQuery();
-boolQuery.should(Q('range', 'age', 20, 25)).should(Q('prefix', 'surname', 'Pi'));
+// nest it
+queryBuilder.filter(builtBoolQuery);
 
-qb.filter(boolQuery.built);
-const query = qb.built;
+const builtQuery = queryBuilder.built;
 // {
 //   bool: {
 //     filter: {
@@ -160,15 +171,15 @@ const query = qb.built;
 
 There are aliases available for some methods.
 
-`const qb = new QueryBuilder();`
-- `qb.query()` → `qb.queryAnd()`
-- `qb.queryMustNot()` → `qb.queryNot()`
-- `qb.queryShould()` → `qb.queryOr()`
-- `qb.filter()` → `qb.filterAnd()`
-- `qb.filterMustNot()` → `qb.filterNot()`
-- `qb.filterShould()` → `qb.filterOr()`
+`const queryBuilder = new eb.QueryBuilder();`
+- `queryBuilder.query()` → `queryBuilder.queryAnd()`
+- `queryBuilder.queryMustNot()` → `queryBuilder.queryNot()`
+- `queryBuilder.queryShould()` → `queryBuilder.queryOr()`
+- `queryBuilder.filter()` → `queryBuilder.filterAnd()`
+- `queryBuilder.filterMustNot()` → `queryBuilder.filterNot()`
+- `queryBuilder.filterShould()` → `queryBuilder.filterOr()`
 
-`const boolQuery = new compoundQueries.BoolQuery();`
+`const boolQuery = new eb.BoolQuery();`
 - `boolQuery.must()` → `boolQuery.and()`
 - `boolQuery.mustNot()` → `boolQuery.not()`
 - `boolQuery.should()` → `boolQuery.or()`
@@ -186,9 +197,9 @@ At the moment you can take a look to the tests to see how all the methods work.
 
 # ToDo List
 
-- Leaf query clauses like `multi_match` or `fuzzy`
-- Allow passing array of filter objects in compound queries
-- Compound queries like `constant_score` or `dis_max`
+- Add leaf query clauses like `multi_match` or `fuzzy`
+- Add compound query clauses like `constant_score` or `dis_max`
+- Allow passing array of filter objects in compound query clauses
 - Possibility to pass some options to leaf query clauses (like `boost`)
 - REPL
 - Browser compatible

@@ -3,8 +3,8 @@
 const expect = require('chai').expect;
 const qb = require('../src');
 const QueryBuilder = qb.QueryBuilder;
-const leafQueries = qb.leafQueries;
-const BoolQuery = qb.compoundQueries.BoolQuery;
+const BoolQuery = qb.BoolQuery;
+const Q = qb.Q;
 
 describe('QueryBuilder', () => {
   it('should build empty query', () => {
@@ -18,7 +18,7 @@ describe('QueryBuilder', () => {
       bool: {
         must: {}
       }
-    });
+    }); 
   });
 
   it('should add must not query', () => {
@@ -95,7 +95,7 @@ describe('QueryBuilder', () => {
 
 describe('leafQueries', () => {
   it('should create match query', () => {
-    const query = leafQueries.matchQuery('description', 'Pink, fluffy and very hungry');
+    const query = qb.MatchQuery('description', 'Pink, fluffy and very hungry');
     expect(query).to.eql({
       match: {
         description: {
@@ -106,7 +106,7 @@ describe('leafQueries', () => {
   });
 
   it('should create match query with extra options', () => {
-    const query = leafQueries.matchQuery('description', 'Pink, fluffy and very hungry', { operator: 'and', zero_terms_query: 'all' });
+    const query = qb.MatchQuery('description', 'Pink, fluffy and very hungry', { operator: 'and', zero_terms_query: 'all' });
     expect(query).to.eql({
       match: {
         description: {
@@ -119,7 +119,7 @@ describe('leafQueries', () => {
   });
 
   it('should create term query', () => {
-    const query = leafQueries.termQuery('name', 'Kirby');
+    const query = qb.TermQuery('name', 'Kirby');
     expect(query).to.eql({
       term: {
         name: 'Kirby'
@@ -128,7 +128,7 @@ describe('leafQueries', () => {
   });
 
   it('should create terms query', () => {
-    const query = leafQueries.termsQuery('name', ['Kirby', 'Metaknight']);
+    const query = qb.TermsQuery('name', ['Kirby', 'Metaknight']);
     expect(query).to.eql({
       terms: {
         name: ['Kirby', 'Metaknight']
@@ -137,7 +137,7 @@ describe('leafQueries', () => {
   });
 
   it('should create range query without including lower and upper', () => {
-    const query = leafQueries.rangeQuery('age', 8, 10);
+    const query = qb.RangeQuery('age', 8, 10);
     expect(query).to.eql({
       range: {
         age: {
@@ -149,7 +149,7 @@ describe('leafQueries', () => {
   });
 
   it('should create range query including lower and upper', () => {
-    const query = leafQueries.rangeQuery('age', 8, 10, true, true);
+    const query = qb.RangeQuery('age', 8, 10, true, true);
     expect(query).to.eql({
       range: {
         age: {
@@ -161,7 +161,7 @@ describe('leafQueries', () => {
   });
 
   it('should create range query including lower', () => {
-    const query = leafQueries.rangeQuery('age', 8, 10, true);
+    const query = qb.RangeQuery('age', 8, 10, true);
     expect(query).to.eql({
       range: {
         age: {
@@ -173,7 +173,7 @@ describe('leafQueries', () => {
   });
 
   it('should create range query including upper', () => {
-    const query = leafQueries.rangeQuery('age', 8, 10, null, true);
+    const query = qb.RangeQuery('age', 8, 10, null, true);
     expect(query).to.eql({
       range: {
         age: {
@@ -185,7 +185,7 @@ describe('leafQueries', () => {
   });
 
   it('should create exists query', () => {
-    const query = leafQueries.existsQuery('name');
+    const query = qb.ExistsQuery('name');
     expect(query).to.eql({
       exists: {
         field: 'name'
@@ -194,7 +194,7 @@ describe('leafQueries', () => {
   });
 
   it('should create prefix query', () => {
-    const query = leafQueries.prefixQuery('name', 'Kir');
+    const query = qb.PrefixQuery('name', 'Kir');
     expect(query).to.eql({ 
       prefix: {
         name: 'Kir'
@@ -203,7 +203,6 @@ describe('leafQueries', () => {
   });
 
   it('should create queries properly using the shortcut function', () => {
-    const Q = leafQueries.shortcut;
     const queries = [Q('term', 'name', 'Kirby'), Q('exists', 'name')];
     expect(queries).to.eql([{ 
       term: {

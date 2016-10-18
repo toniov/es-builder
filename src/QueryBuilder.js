@@ -1,6 +1,6 @@
 'use strict';
 
-const BoolQuery = require('./compoundQueries').BoolQuery;
+const BoolQuery = require('./BoolQuery');
 const boolQueryInstance = Symbol('boolQueryInstance');
 const boolQueryInstanceForFilter = Symbol('boolQueryInstanceForFilter');
 

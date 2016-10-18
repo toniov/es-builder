@@ -88,4 +88,4 @@ BoolQuery.prototype.and = BoolQuery.prototype.must;
 BoolQuery.prototype.not = BoolQuery.prototype.mustNot;
 BoolQuery.prototype.or = BoolQuery.prototype.should;
 
-exports.BoolQuery = BoolQuery;
+module.exports = BoolQuery;
