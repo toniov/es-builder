@@ -1,4 +1,5 @@
 'use strict';
+const Mixins = require('./Mixins');
 
 /**
  * Create match query
@@ -15,6 +16,6 @@ const MatchQuery = (field, text, extraOps) => {
     }
   };
   Object.assign(baseQuery.match[field], extraOps);
-  return baseQuery;
+  return Mixins(baseQuery, 'match', field);
 };
 module.exports = MatchQuery;

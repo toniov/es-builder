@@ -1,15 +1,18 @@
 'use strict';
+const Mixins = require('./Mixins');
 
 /**
  * Create term query
  * @param {string} field
  * @param {string|number|Date} value
  */
-const TermQuery = (field, value) => {
-  return {
+module.exports = (field, value) => {
+  const baseQuery = {
     term: {
-      [field]: value
+      [field]: {
+        value: value
+      }
     }
   };
+  return Mixins(baseQuery, 'term', field);
 };
-module.exports = TermQuery;

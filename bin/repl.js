@@ -3,14 +3,19 @@
 const repl = require('repl');
 const fs = require('fs');
 const path = require('path');
-const qb = require('../src');
+const eb = require('../src');
+const util = require('util');
 
-const r = repl.start('es-builder> ');
+function myWriter (output) {
+  return util.inspect(output, { depth: null, colors: true });
+}
+
+const r = repl.start({ prompt: 'es-builder> ', writer: myWriter });
 
 // exposte main classes
-r.context.qb = qb;
-r.context.QueryBuilder = qb.QueryBuilder;
-r.context.BoolQuery = qb.BoolQuery;
+r.context.eb = eb;
+r.context.QueryBuilder = eb.QueryBuilder;
+r.context.BoolQuery = eb.BoolQuery;
 // expose all the leaf-queries
 fs.readdirSync(path.join(__dirname, '..', 'src', 'leaf-queries')).forEach((file) => {
   r.context[file.slice(0, -3)] = require(`../src/leaf-queries/${file}`);

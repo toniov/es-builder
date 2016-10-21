@@ -1,15 +1,18 @@
 'use strict';
+const Mixins = require('./Mixins');
 
 /**
  * Create prefix query
  * @param {string} field
- * @param {string} value
+ * @param {string|number|Date} value
  */
-const PrefixQuery = (field, value) => {
-  return {
+module.exports = (field, value) => {
+  const baseQuery = {
     prefix: {
-      [field]: value
+      [field]: {
+        value: value
+      }
     }
   };
+  return Mixins(baseQuery, 'prefix', field);
 };
-module.exports = PrefixQuery;

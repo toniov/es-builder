@@ -1,102 +1,147 @@
 'use strict';
 
 const BoolQuery = require('./BoolQuery');
-const boolQueryInstance = Symbol('boolQueryInstance');
-const boolQueryInstanceForFilter = Symbol('boolQueryInstanceForFilter');
+const _build = Symbol('_build');
 
-/** Class representing a query builder.*/
-class QueryBuilder {
-  /**
-   * Reference:
-   * https://www.elastic.co/guide/en/elasticsearch/guide/current/combining-filters.html
-   *
-   */
-  constructor () {
-    this[boolQueryInstance] = new BoolQuery();
-    this[boolQueryInstanceForFilter] = new BoolQuery();
-  }
+/**
+ * @see https://www.elastic.co/guide/en/elasticsearch/guide/current/combining-filters.html
+ */
+module.exports = () => {
+  const boolQuery = BoolQuery();
+  const boolQueryForFilter = BoolQuery();
 
-  /**
-   * Add must query to the bool query
-   *
-   * @param {Object} query
-   */
-  query (query) {
-    this[boolQueryInstance].must(query);
-    return this;
-  }
+  return {
+    /**
+     * Compose full query
+     * @private
+     * @return completed query
+     */
+    [_build] () {
+      const completeQuery = boolQuery.built;
+      // add filter clause only in case filters were added
+      const filterBool = boolQueryForFilter.built;
+      if (Object.keys(filterBool.bool).length > 0) {
+        completeQuery.bool.filter = filterBool;
+      }
+      return completeQuery;
+    },
 
-  /**
-   * Add must not query to the bool query
-   *
-   * @param {Object} query
-   */
-  queryMustNot (query) {
-    this[boolQueryInstance].mustNot(query);
-    return this;
-  }
+    /**
+     * Getter for the completed query
+     * @return complete query cloned
+     */
+    get built () {
+      return JSON.parse(JSON.stringify(this[_build]()));
+    },
 
-  /**
-   * Add should query to the bool query
-   *
-   * @param {Object} query
-   */
-  queryShould (query) {
-    this[boolQueryInstance].should(query);
-    return this;
-  }
+    /**
+     * Customize JSON stringification behavior
+     * @see: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
+     */
+    toJSON () {
+      return this[_build]();
+    },
 
-  /**
-   * Add must filter to the bool query
-   *
-   * @param {Object} query
-   */
-  filter (query) {
-    this[boolQueryInstanceForFilter].must(query);
-    return this;
-  }
+    /**
+     * Add must query to the bool query
+     * @param {Object} query
+     */
+    query (query) {
+      boolQuery.must(query);
+      return this;
+    },
 
-  /**
-   * Add must not filter to the bool query
-   *
-   * @param {Object} query
-   */
-  filterMustNot (query) {
-    this[boolQueryInstanceForFilter].mustNot(query);
-    return this;
-  }
+    /**
+     * Add must not query to the bool query
+     * @param {Object} query
+     */
+    queryMustNot (query) {
+      boolQuery.mustNot(query);
+      return this;
+    },
 
-  /**
-   * Add should filter to the bool query
-   *
-   * @param {Object} query
-   */
-  filterShould (query) {
-    this[boolQueryInstanceForFilter].should(query);
-    return this;
-  }
+    /**
+     * Add should query to the bool query
+     * @param {Object} query
+     */
+    queryShould (query) {
+      boolQuery.should(query);
+      return this;
+    },
 
-  /**
-   * Getter for the full query that will be passed to the search API
-   * @return complete query cloned
-   */
-  get built () {
-    const completeQuery = this[boolQueryInstance].built;
-    // add filter clause only in case filters were added
-    const filterBool = this[boolQueryInstanceForFilter].built;
-    if (Object.keys(filterBool.bool).length > 0) {
-      completeQuery.bool.filter = filterBool;
+    /**
+     * Add must filter to the bool query
+     * @param {Object} query
+     */
+    filter (query) {
+      boolQueryForFilter.must(query);
+      return this;
+    },
+
+    /**
+     * Add must not filter to the bool query
+     * @param {Object} query
+     */
+    filterMustNot (query) {
+      boolQueryForFilter.mustNot(query);
+      return this;
+    },
+
+    /**
+     * Add should filter to the bool query
+     * @param {Object} query
+     */
+    filterShould (query) {
+      boolQueryForFilter.should(query);
+      return this;
+    },
+
+    /**
+     * Add must query to the bool query
+     * @param {Object} query
+     */
+    queryAnd (query) {
+      return this.query(query);
+    },
+
+    /**
+     * Add must not query to the bool query alias
+     * @param {Object} query
+     */
+    queryNot (query) {
+      return this.mustNot(query);
+    },
+
+    /**
+     * Add should query to the bool query alias
+     * @param {Object} query
+     */
+    queryOr (query) {
+      return this.queryShould(query);
+    },
+
+    /**
+     * Add must filter to the bool query alias
+     * @param {Object} query
+     */
+    filterAnd (query) {
+      return this.filter(query);
+    },
+
+    /**
+     * Add must not filter to the bool query alias
+     * @param {Object} query
+     */
+    filterNot (query) {
+      return this.filterMustNot(query);
+    },
+
+    /**
+     * Add should filter to the bool query alias
+     * @param {Object} query
+     */
+    filterOr (query) {
+      return this.filterShould(query);
     }
-    return JSON.parse(JSON.stringify(completeQuery));
-  }
-}
-
-// Add aliases
-QueryBuilder.prototype.queryAnd = QueryBuilder.prototype.query;
-QueryBuilder.prototype.queryNot = QueryBuilder.prototype.queryMustNot;
-QueryBuilder.prototype.queryOr = QueryBuilder.prototype.queryShould;
-QueryBuilder.prototype.filterAnd = QueryBuilder.prototype.filter;
-QueryBuilder.prototype.filterNot = QueryBuilder.prototype.filterMustNot;
-QueryBuilder.prototype.filterOr = QueryBuilder.prototype.filterShould;
-
-module.exports = QueryBuilder;
+  };
+};

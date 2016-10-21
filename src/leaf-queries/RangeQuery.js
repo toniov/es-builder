@@ -1,4 +1,5 @@
 'use strict';
+const Mixins = require('./Mixins');
 
 /**
  * Create terms query
@@ -8,25 +9,45 @@
  * @param {boolean} [includeLowser]
  * @param {boolean} [includeUpper]
  */
-const RangeQuery = (field, from, to, includeLower, includeUpper) => {
+module.exports = (field) => {
   const baseQuery = {
     range: {
       [field]: {}
     }
   };
 
-  if (includeLower) {
-    baseQuery.range[field].gte = from;
-  } else {
-    baseQuery.range[field].gt = from;
-  }
-
-  if (includeUpper) {
-    baseQuery.range[field].lte = to;
-  } else {
-    baseQuery.range[field].lt = to;
-  }
-
-  return baseQuery;
+  return Object.assign({
+    /**
+     * Add Greater-than or equal to
+     * @param {number} value
+     */
+    gte (value) {
+      baseQuery.range[field].gte = value;
+      return this;
+    },
+    /**
+     * Add Greater-than
+     * @param {number} value
+     */
+    gt (value) {
+      baseQuery.range[field].gt = value;
+      return this;
+    },
+    /**
+     * Add Less-than or equal to
+     * @param {number} value
+     */
+    lte (value) {
+      baseQuery.range[field].lte = value;
+      return this;
+    },
+    /**
+     * Add Less-than
+     * @param {number} value
+     */
+    lt (value) {
+      baseQuery.range[field].lt = value;
+      return this;
+    }
+  }, Mixins(baseQuery, 'range', field));
 };
-module.exports = RangeQuery;
