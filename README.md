@@ -8,11 +8,20 @@ It just builds the `query` element within the search request body, the complex p
 
 [Info about Search parameters.](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-body.html#_parameters_4)
 
-# Install
+# Installation
+
+The package can be installed as a local module, to be required in your code.
 
 ```js
 npm install es-builder
 ```
+
+Also, it can be installed globally, ready to be used through the Node.js REPL.
+
+```js
+npm install -g es-builder
+```
+
 
 # Features
 
@@ -21,6 +30,8 @@ npm install es-builder
 - `built` getter method returns each time a copy of the object so it can be safely passed to foreign code
 
 # Usage
+
+As a local module:
 
 ```js
 const eb = require('es-builder');
@@ -201,7 +212,6 @@ At the moment you can take a look to the tests to see how all the methods work.
 - Add compound query clauses like `constant_score` or `dis_max`
 - Allow passing array of filter objects in compound query clauses
 - Possibility to pass some options to leaf query clauses (like `boost`)
-- REPL
 - Browser compatible
 - And more
 
