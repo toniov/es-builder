@@ -86,14 +86,16 @@ client.search({
 
 ```
 
-## Used as a global module.
+## Used as a global module (REPL).
+
+All the query classes has been exposed to the REPL so they can be called directly.
 
 ```zsh
 $ es-builder
 
-es-builder> const query = QueryBuilder().query(eb.TermQuery('name', 'Kirby')).query(eb.MatchQuery('description', 'Pink, fluffy and very hungry')).queryMustNot(eb.TermQuery('name', 'Waddle Dee'));
+es-builder> query = QueryBuilder().query(TermQuery('name', 'Kirby')).query(MatchQuery('description', 'Pink, fluffy and very hungry')).queryMustNot(TermQuery('name', 'Waddle Dee'));
 
-es-builder> query.toJSON(1)
+es-builder> query.stringifed
 '{"bool":{"must":[{"term":{"name":{"value":"Kirby"}}},{"match":{"description":{"query":"Pink, fluffy and very hungry"}}}],"must_not":{"term":{"name":{"value":"Waddle Dee"}}}}}'
 
 es-builder> .exit
