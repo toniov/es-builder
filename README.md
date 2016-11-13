@@ -25,12 +25,13 @@ npm install -g es-builder
 # Features
 
 - No production dependencies
+- Can be required as a module or used in the command line
 - Chainable methods
 - `built` getter method returns a copy of the object so it can be safely passed to foreign code
 
 # Usage
 
-## Used as a local module.
+## Used as a local module
 
 It is compatible with the [Elasticsearch official client library](https://github.com/elastic/elasticsearch-js):
 
@@ -86,7 +87,7 @@ client.search({
 
 ```
 
-## Used as a global module (REPL).
+## Used as a global module (REPL)
 
 All the query classes has been exposed to the REPL so they can be called directly.
 
@@ -258,7 +259,10 @@ At the moment you can take a look to the tests to see how all the methods work.
 # Compatibility
 
 - Compatible with Elasticsearch 2.x search API
-- It has been transpiled to ES5 using [Babel](https://babeljs.io/), so it is compatible with old Node.js versions (> 0.12.0)
+- Node.js version
+  - As a required module: It has been transpiled to ES5 using [Babel](https://babeljs.io/), so it is compatible with old Node.js versions (> 0.12.0)
+  - As a global module (REPL): > 6.0.0
+
 
 # ToDo List
 
