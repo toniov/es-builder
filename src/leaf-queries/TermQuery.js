@@ -1,15 +1,28 @@
 'use strict';
+const Mixins = require('./Mixins');
 
-/**
- * Create term query
- * @param {string} field
- * @param {string|number|Date} value
- */
-const TermQuery = (field, value) => {
-  return {
-    term: {
-      [field]: value
-    }
-  };
+/** Class representing a term query.*/
+class TermQuery extends Mixins {
+  /**
+   * Create term query
+   * @param {string} field
+   * @param {string|number|Date} value
+   */
+  constructor(field, value) {
+    super('term', field);
+
+    this.term = {
+      [field]: {
+        value: value
+      }
+    };
+  }
 };
-module.exports = TermQuery;
+
+const factoryTermQuery = (...args) => {
+  return new TermQuery(...args);
+};
+// also expose statically the original class
+factoryTermQuery._originalClass = TermQuery;
+
+module.exports = factoryTermQuery;

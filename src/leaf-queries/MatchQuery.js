@@ -1,20 +1,30 @@
 'use strict';
+const Mixins = require('./Mixins');
 
-/**
- * Create match query
- * @param {string} field
- * @param {string} text
- * @param {Object} [extraOps]
- */
-const MatchQuery = (field, text, extraOps) => {
-  const baseQuery = {
-    match: {
+/** Class representing a match query.*/
+class MatchQuery extends Mixins {
+  /**
+   * Create match query
+   * @param {string} field
+   * @param {string} text
+   * @param {Object} [extraOps]
+   */
+  constructor(field, text, extraOps) {
+    super('match', field);
+
+    this.match = {
       [field]: {
         query: text
       }
-    }
-  };
-  Object.assign(baseQuery.match[field], extraOps);
-  return baseQuery;
+    };
+    Object.assign(this.match[field], extraOps);
+  }
 };
-module.exports = MatchQuery;
+
+const factoryMatchQuery = (...args) => {
+  return new MatchQuery(...args);
+};
+// also expose statically the original class
+factoryMatchQuery._originalClass = MatchQuery;
+
+module.exports = factoryMatchQuery;

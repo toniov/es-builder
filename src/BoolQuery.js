@@ -1,43 +1,67 @@
 'use strict';
 
 const add = Symbol('add');
-const boolQuery = Symbol('boolQuery');
+const _build = Symbol('_build');
+const _boolQuery = Symbol('_boolQuery');
 
-/** Class representing an Elasticsearch bool query.*/
+/** Class representing a query builder.*/
 class BoolQuery {
   /**
-   * Reference:
-   * https://www.elastic.co/guide/en/elasticsearch/guide/current/combining-filters.html
-   *
+   * Create a bool query
    */
-  constructor () {
-    this[boolQuery] = {};
+  constructor() {
+    this[_boolQuery] = {};
+  }
+
+  /**
+   * Compose bool query
+   * @private
+   * @return completed query
+   */
+  [_build] () {
+    return {
+      bool: this[_boolQuery]
+    };
+  }
+
+  /**
+   * Getter for the completed bool query
+   * @return complete query cloned
+   */
+  get built () {
+    return JSON.parse(JSON.stringify(this[_build]()));
+  }
+
+  /**
+   * Customize JSON stringification behavior
+   * @see: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
+   */
+  toJSON () {
+    return this[_build]();
   }
 
   /**
    * Add to the appropiate bool
-   *
    * @private
    * @param {string} type
    * @param {Object} query
    */
   [add] (type, query) {
-    if (!this[boolQuery][type]) {
+    if (!this[_boolQuery][type]) {
       // a) in case not exist it is created
-      this[boolQuery][type] = query;
-    } else if (Array.isArray(this[boolQuery][type])) {
+      this[_boolQuery][type] = query;
+    } else if (Array.isArray(this[_boolQuery][type])) {
       // b) in case of array it is pushed
-      this[boolQuery][type].push(query);
+      this[_boolQuery][type].push(query);
     } else {
       // c) in case it is an object it is converted into an array and pushed
-      this[boolQuery][type] = [this[boolQuery][type], query];
+      this[_boolQuery][type] = [this[_boolQuery][type], query];
     }
     return this;
   }
 
   /**
    * Add must
-   *
    * @param {Object} query
    */
   must (query) {
@@ -46,7 +70,6 @@ class BoolQuery {
 
   /**
    * Add must_not
-   *
    * @param {Object} query
    */
   mustNot (query) {
@@ -55,7 +78,6 @@ class BoolQuery {
 
   /**
    * Add should
-   *
    * @param {Object} query
    */
   should (query) {
@@ -64,7 +86,6 @@ class BoolQuery {
 
   /**
    * Add query
-   *
    * @param {Object} query
    */
   filter (query) {
@@ -72,20 +93,34 @@ class BoolQuery {
   }
 
   /**
-   * Getter for built bool query
-   * @return complete bool query cloned
+   * must alias
+   * @param {Object} query
    */
-  get built () {
-    const completeBoolQuery = {
-      bool: this[boolQuery]
-    };
-    return JSON.parse(JSON.stringify(completeBoolQuery));
+  and (query) {
+    return this.must(query);
   }
-}
 
-// Add aliases
-BoolQuery.prototype.and = BoolQuery.prototype.must;
-BoolQuery.prototype.not = BoolQuery.prototype.mustNot;
-BoolQuery.prototype.or = BoolQuery.prototype.should;
+  /**
+   * must_not alias
+   * @param {Object} query
+   */
+  not (query) {
+    return this.mustNot(query);
+  }
 
-module.exports = BoolQuery;
+  /**
+   * should alias
+   * @param {Object} query
+   */
+  or (query) {
+    return this.should(query);
+  }
+};
+
+const factoryBoolQuery = () => {
+  return new BoolQuery;
+};
+// also expose statically the original class
+factoryBoolQuery._originalClass = BoolQuery;
+
+module.exports = factoryBoolQuery;

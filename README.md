@@ -22,61 +22,111 @@ Also, it can be installed globally, ready to be used through the Node.js REPL.
 npm install -g es-builder
 ```
 
-
 # Features
 
 - No production dependencies
+- Can be required as a module or used in the command line
 - Chainable methods
-- `built` getter method returns each time a copy of the object so it can be safely passed to foreign code
+- `built` getter method returns a copy of the object so it can be safely passed to foreign code
 
 # Usage
 
-As a local module:
+## Used as a local module
+
+It is compatible with the [Elasticsearch official client library](https://github.com/elastic/elasticsearch-js):
 
 ```js
 const eb = require('es-builder');
+var elasticsearch = require('elasticsearch');
 
-const queryBuilder = new QueryBuilder()
+var client = new elasticsearch.Client({
+  host: 'localhost:9200',
+  log: 'trace'
+});
+
+const query = QueryBuilder()
   .query(eb.TermQuery('name', 'Kirby'))
   .query(eb.MatchQuery('description', 'Pink, fluffy and very hungry'))
   .queryMustNot(eb.TermQuery('name', 'Waddle Dee'));
 
-const builtQuery = queryBuilder.built;
+)
+// stringifying the object will give the following result
+// JSON.stringify(query)
 // {
-//   bool: {
-//     must: [{
-//       term: {
-//         name: 'Kirby'
+//   "bool": {
+//     "must": [{
+//       "term": {
+//         "name": "Kirby"
 //       }
 //     }, {
-//       match: {
-//         description: {
-//           query: 'Pink, fluffy and very hungry'
+//       "match": {
+//         "description": {
+//           "query": "Pink, fluffy and very hungry"
 //         }
 //       }
 //     }],
-//     must_not: {
-//       term: {
-//         name: 'Waddle Dee'
+//     "must_not": {
+//       "term": {
+//         "name": "Waddle Dee"
 //       }
 //     }
 //   }
 // }
+
+// but the created query can be passed like that, since the Elasticsearch client will stringify it internally after
+client.search({
+  index: 'games',
+  type: 'dreamland',
+  body: {
+    query: query
+  }
+}, function(err, resp) {
+  // result of the search here
+  ...
+});
+
 ```
+
+## Used as a global module (REPL)
+
+All the query classes has been exposed to the REPL so they can be called directly.
+
+```zsh
+$ es-builder
+
+es-builder> query = QueryBuilder().query(TermQuery('name', 'Kirby')).query(MatchQuery('description', 'Pink, fluffy and very hungry')).queryMustNot(TermQuery('name', 'Waddle Dee'));
+
+es-builder> query.stringifed
+'{"bool":{"must":[{"term":{"name":{"value":"Kirby"}}},{"match":{"description":{"query":"Pink, fluffy and very hungry"}}}],"must_not":{"term":{"name":{"value":"Waddle Dee"}}}}}'
+
+es-builder> .exit
+```
+
+Copy the result above and paste it in your curl search request
+
+```zsh
+$ curl -XGET 'http://localhost:9200/games/dreamland/_search' -d '{
+    "query" : {"bool":{"must":[{"term":{"name":{"value":"Kirby"}}},{"match":{"description":{"query":"Pink, fluffy and very hungry"}}}],"must_not":{"term":{"name":{"value":"Waddle Dee"}}}}}
+}
+'
+```
+
+## Filter context
 
 Adding clauses to filter context is possible as well:
 
 ```js
-queryBuilder.filter(eb.TermQuery('name', 'Kirby'));
+query.filter(eb.TermQuery('name', 'Kirby'));
 
-const builtQuery = queryBuilder.built;
+// stringifying the object will give the following result
+// JSON.stringify(query)
 // {
-//   bool: {
-//     filter: {
-//       bool: {
-//         must: {
-//           term: {
-//             name: 'Kirby'
+//   "bool": {
+//     "filter": {
+//       "bool": {
+//         "must": {
+//           "term": {
+//             "name": "Kirby"
 //           }
 //         }
 //       }
@@ -107,16 +157,17 @@ There is a shortcut available for leaf query clauses, inspired by [elasticsearch
 
 ```js
 const Q = eb.Q;
+const TermsQuery = eb.TermsQuery;
 
 // doing this
 Q('terms', 'name', ['Kirby', 'Metaknight']);
 // equals
-eb.TermsQuery('name', ['Kirby', 'Metaknight'])
+TermsQuery('name', ['Kirby', 'Metaknight'])
 
 // both giving the same result:
 // {
-//  terms: {
-//    name: ['Kirby', 'Metaknight']
+//  "terms": {
+//    "name": ["Kirby", "Metaknight"]
 //  }
 // }
 ```
@@ -131,43 +182,47 @@ Combined queries can be built nesting compound query clauses.
 const eb = require('es-builder');
 const Q = eb.Q;
 
-const queryBuilder = new eb.QueryBuilder();
+const query = eb.QueryBuilder();
 // add a couple of filters
-queryBuilder
+query
   .filter(Q('terms', 'name', ['Kirby', 'Metaknight']))
   .filter(Q('exists', 'age'));
 
 // create a bool compound query
-const builtBoolQuery = new eb.BoolQuery()
-  .should(Q('range', 'age', 20, 25))
-  .should(Q('prefix', 'surname', 'Pi'))
-  .built;
+const boolQuery = eb.BoolQuery()
+  .should(Q('range', 'age').gt(20).lt(25))
+  .should(Q('prefix', 'surname', 'Ki'));
 
 // nest it
-queryBuilder.filter(builtBoolQuery);
+query.filter(boolQuery);
 
-const builtQuery = queryBuilder.built;
+// stringifying the object will give the following result
+// JSON.stringify(query)
 // {
-//   bool: {
-//     filter: {
+//   "bool": {
+//     "filter": {
 //       bool: {
-//         must: [{
-//           terms: {
-//             name: ['Kirby', 'Metaknight']
+//         "must": [{
+//           "terms": {
+//             "name": {
+//               "value": ["Kirby", "Metaknight"]
+//             } 
 //           }
 //         }, {
-//           exists: {
-//             field: 'age'
+//           "exists": {
+//             "field": "age"
 //           }
 //         }, {
-//           bool: {
-//             should: [{
-//               range: {
-//                 age: { gt: 20, lt: 25 }
+//           "bool": {
+//             "should": [{
+//               "range": {
+//                 "age": { "gt": 20, "lt": 25 }
 //               }
 //             }, {
-//               prefix: {
-//                 surname: 'Ki'
+//               "prefix": {
+//                 "surname": {
+//                   "value": "Ki"
+//                 }
 //               }
 //             }]
 //           }
@@ -182,7 +237,7 @@ const builtQuery = queryBuilder.built;
 
 There are aliases available for some methods.
 
-`const queryBuilder = new eb.QueryBuilder();`
+`const queryBuilder = eb.QueryBuilder();`
 - `queryBuilder.query()` → `queryBuilder.queryAnd()`
 - `queryBuilder.queryMustNot()` → `queryBuilder.queryNot()`
 - `queryBuilder.queryShould()` → `queryBuilder.queryOr()`
@@ -190,7 +245,7 @@ There are aliases available for some methods.
 - `queryBuilder.filterMustNot()` → `queryBuilder.filterNot()`
 - `queryBuilder.filterShould()` → `queryBuilder.filterOr()`
 
-`const boolQuery = new eb.BoolQuery();`
+`const boolQuery = eb.BoolQuery();`
 - `boolQuery.must()` → `boolQuery.and()`
 - `boolQuery.mustNot()` → `boolQuery.not()`
 - `boolQuery.should()` → `boolQuery.or()`
@@ -204,14 +259,16 @@ At the moment you can take a look to the tests to see how all the methods work.
 # Compatibility
 
 - Compatible with Elasticsearch 2.x search API
-- It has been transpiled to ES5 using [Babel](https://babeljs.io/), so it is compatible with old Node.js versions (> 0.12.0)
+- Node.js version
+  - As a required module: It has been transpiled to ES5 using [Babel](https://babeljs.io/), so it is compatible with old Node.js versions (> 0.12.0)
+  - As a global module (REPL): > 6.0.0
+
 
 # ToDo List
 
 - Add leaf query clauses like `multi_match` or `fuzzy`
 - Add compound query clauses like `constant_score` or `dis_max`
 - Allow passing array of filter objects in compound query clauses
-- Possibility to pass some options to leaf query clauses (like `boost`)
 - Browser compatible
 - And more
 

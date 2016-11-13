@@ -3,15 +3,28 @@
 const repl = require('repl');
 const fs = require('fs');
 const path = require('path');
-const qb = require('../src');
+const os = require('os')
+const eb = require('../src');
+const util = require('util');
 
-const r = repl.start('es-builder> ');
+const file = path.join(os.homedir(), '.es-builder_repl_history');
+const fd = fs.openSync(file, 'a');
+
+const myWriter = (output) => {
+  return util.inspect(output, { depth: null, colors: true });
+}
+
+const replServer = repl.start({ prompt: 'es-builder> ', writer: myWriter });
+replServer.on('line', (input) => {
+  fs.write(fd, input + '\n');
+});
+replServer.history = fs.readFileSync(file, 'utf-8').split('\n').reverse();
 
 // exposte main classes
-r.context.qb = qb;
-r.context.QueryBuilder = qb.QueryBuilder;
-r.context.BoolQuery = qb.BoolQuery;
+replServer.context.eb = eb;
+replServer.context.QueryBuilder = eb.QueryBuilder;
+replServer.context.BoolQuery = eb.BoolQuery;
 // expose all the leaf-queries
 fs.readdirSync(path.join(__dirname, '..', 'src', 'leaf-queries')).forEach((file) => {
-  r.context[file.slice(0, -3)] = require(`../src/leaf-queries/${file}`);
+  replServer.context[file.slice(0, -3)] = require(`../src/leaf-queries/${file}`);
 });

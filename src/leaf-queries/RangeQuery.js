@@ -1,32 +1,67 @@
 'use strict';
+const Mixins = require('./Mixins');
+const _field = Symbol('_field');
 
-/**
- * Create terms query
- * @param {string} field
- * @param {number, string, Date} [from]
- * @param {number, string, Date} [to]
- * @param {boolean} [includeLowser]
- * @param {boolean} [includeUpper]
- */
-const RangeQuery = (field, from, to, includeLower, includeUpper) => {
-  const baseQuery = {
-    range: {
+/** Class representing a range query.*/
+class RangeQuery extends Mixins {
+  /**
+   * Create range query
+   * @param {string} field
+   */
+  constructor(field) {
+    super('range', field);
+
+    this.range = {
       [field]: {}
-    }
-  };
-
-  if (includeLower) {
-    baseQuery.range[field].gte = from;
-  } else {
-    baseQuery.range[field].gt = from;
+    };
+    this[_field] = field;
   }
 
-  if (includeUpper) {
-    baseQuery.range[field].lte = to;
-  } else {
-    baseQuery.range[field].lt = to;
+  /**
+   * Add Greater-than or equal to
+   * @param {number} value
+   */
+  gte (value) {
+    const field = this[_field];
+    this.range[field].gte = value;
+    return this;
   }
 
-  return baseQuery;
+  /**
+   * Add Greater-than
+   * @param {number} value
+   */
+  gt (value) {
+    const field = this[_field];
+    this.range[field].gt = value;
+    return this;
+  }
+
+  /**
+   * Add Less-than or equal to
+   * @param {number} value
+   */
+  lte (value) {
+    const field = this[_field];
+    this.range[field].lte = value;
+    return this;
+  }
+
+  /**
+   * Add Less-than
+   * @param {number} value
+   */
+  lt (value) {
+    const field = this[_field];
+    this.range[field].lt = value;
+    return this;
+  }
 };
-module.exports = RangeQuery;
+
+const factoryRangeQuery = (...args) => {
+  return new RangeQuery(...args);
+};
+// also expose statically the original class
+factoryRangeQuery._originalClass = RangeQuery;
+
+module.exports = factoryRangeQuery;

@@ -1,11 +1,12 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-
+// expose objects
 exports.QueryBuilder = require('./QueryBuilder');
 exports.BoolQuery = require('./BoolQuery');
-
-fs.readdirSync(path.join(__dirname, 'leaf-queries')).forEach((file) => {
-  exports[file.slice(0, -3)] = require(`./leaf-queries/${file}`);
-});
+exports.TermQuery = require('./leaf-queries/TermQuery');
+exports.TermsQuery = require('./leaf-queries/TermsQuery');
+exports.RangeQuery = require('./leaf-queries/RangeQuery');
+exports.ExistsQuery = require('./leaf-queries/ExistsQuery');
+exports.PrefixQuery = require('./leaf-queries/PrefixQuery');
+exports.MatchQuery = require('./leaf-queries/MatchQuery');
+exports.Q = require('./leaf-queries/Q');

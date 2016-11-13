@@ -1,6 +1,6 @@
 {
   "name": "es-builder",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Elasticsearch query builder for Node.js",
   "main": "lib/index.js",
   "bin": {
@@ -23,7 +23,7 @@
   "license": "ISC",
   "repository": "antonvs2/es-builder",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=0.12.0"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",
