@@ -49,7 +49,6 @@ const query = QueryBuilder()
   .query(eb.MatchQuery('description', 'Pink, fluffy and very hungry'))
   .queryMustNot(eb.TermQuery('name', 'Waddle Dee'));
 
-)
 // stringifying the object will give the following result
 // JSON.stringify(query)
 // {
@@ -96,7 +95,7 @@ $ es-builder
 
 es-builder> query = QueryBuilder().query(TermQuery('name', 'Kirby')).query(MatchQuery('description', 'Pink, fluffy and very hungry')).queryMustNot(TermQuery('name', 'Waddle Dee'));
 
-es-builder> query.stringifed
+es-builder> query.stringified
 '{"bool":{"must":[{"term":{"name":{"value":"Kirby"}}},{"match":{"description":{"query":"Pink, fluffy and very hungry"}}}],"must_not":{"term":{"name":{"value":"Waddle Dee"}}}}}'
 
 es-builder> .exit
@@ -105,10 +104,10 @@ es-builder> .exit
 Copy the result above and paste it in your curl search request
 
 ```zsh
-$ curl -XGET 'http://localhost:9200/games/dreamland/_search' -d '{
+$ curl -XGET 'http://localhost:9200/games/dreamland/_search' -d'
+{
     "query" : {"bool":{"must":[{"term":{"name":{"value":"Kirby"}}},{"match":{"description":{"query":"Pink, fluffy and very hungry"}}}],"must_not":{"term":{"name":{"value":"Waddle Dee"}}}}}
-}
-'
+}'
 ```
 
 ## Filter context
@@ -153,7 +152,7 @@ To Elasticsearch both of them are the same, therefore using this utility, the re
 
 ## Shortcut for leaf query clauses
 
-There is a shortcut available for leaf query clauses, inspired by [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py)
+There is a shortcut available for leaf query clauses when used as a local module, inspired by [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py)
 
 ```js
 const Q = eb.Q;
@@ -173,6 +172,24 @@ TermsQuery('name', ['Kirby', 'Metaknight'])
 ```
 
 Also, there is a one-to-one mapping relation between the raw query and its equivalent in the DSL, therefore adding directly raw queries as Javascript objects is fine.
+
+```js
+const eb = require('es-builder');
+eb.QueryBuilder().query({ terms: name: ['Kirby', 'Metaknight'] }).built;
+
+// same result:
+//
+// {
+//   bool: {
+//    must: {
+//     terms: {
+//        name: [ 'Kirby', 'Metaknight' ]
+//        }
+//      }
+//    }
+//  }
+// }
+```
 
 ## Complex queries
 
