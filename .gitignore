@@ -38,3 +38,6 @@ jspm_packages
 
 # Mac OS X metadata
 .DS_Store
+
+# Transpiled code
+lib/

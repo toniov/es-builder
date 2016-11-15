@@ -3,8 +3,8 @@
 const repl = require('repl');
 const fs = require('fs');
 const path = require('path');
-const os = require('os')
-const eb = require('../src');
+const os = require('os');
+const eb = require('../lib');
 const util = require('util');
 
 const file = path.join(os.homedir(), '.es-builder_repl_history');
@@ -12,7 +12,7 @@ const fd = fs.openSync(file, 'a');
 
 const myWriter = (output) => {
   return util.inspect(output, { depth: null, colors: true });
-}
+};
 
 const replServer = repl.start({ prompt: 'es-builder> ', writer: myWriter });
 replServer.on('line', (input) => {
