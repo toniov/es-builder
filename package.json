@@ -1,6 +1,6 @@
 {
   "name": "es-builder",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Elasticsearch query builder for Node.js",
   "main": "lib/index.js",
   "bin": {
@@ -13,7 +13,8 @@
     "test": "mocha test/src/index.js",
     "test-transpilled": "mocha test/lib/index.js",
     "build": "babel src -d lib && babel test/src -d test/lib",
-    "prepublish": "npm run build && npm run test-transpilled"
+    "prepublish": "npm run build && npm run test-transpilled",
+    "clean": "rm -rf lib && rm -rf test/lib"
   },
   "keywords": [
     "Elasticsearch",

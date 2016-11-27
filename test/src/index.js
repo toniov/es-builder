@@ -13,19 +13,41 @@ describe('QueryBuilder', () => {
   });
 
   it('should add must query', () => {
-    const query = QueryBuilder().query({}).built;
-    expect(query).to.eql({
+    const query = QueryBuilder().query({ test: 1 }).built;
+    expect(query).to.eql({ test: 1 });
+  });
+
+  it('should add multiple must query', () => {
+    const query = QueryBuilder().query({ test: 1 }).query({ test2: 2 }).built;
+    expect(query).to.eql({ 
       bool: {
-        must: {}
+        must: [{
+          test: 1
+        }, {
+          test2: 2
+        }]
       }
     });
   });
 
   it('should add must not query', () => {
-    const query = QueryBuilder().queryMustNot({}).built;
+    const query = QueryBuilder().queryMustNot({ test: 1 }).built;
     expect(query).to.eql({
       bool: {
-        must_not: {}
+        must_not: { test: 1 }
+      }
+    });
+  });
+
+  it('should add multiple must not query', () => {
+    const query = QueryBuilder().queryMustNot({ test: 1 }).queryMustNot({ test2: 2 }).built;
+    expect(query).to.eql({
+      bool: {
+        must_not: [{
+          test: 1 
+        }, {
+          test2: 2
+        }]
       }
     });
   });
@@ -39,15 +61,33 @@ describe('QueryBuilder', () => {
     });
   });
 
+  it('should add multiple should query', () => {
+    const query = QueryBuilder().queryShould({ test: 1 }).queryShould({ test2: 2 }).built;
+    expect(query).to.eql({
+      bool: {
+        should: [{
+          test: 1 
+        }, {
+          test2: 2
+        }]
+      }
+    });
+  });
+
   it('should add filter must query', () => {
     const query = QueryBuilder().filter({}).built;
     expect(query).to.eql({
       bool: {
-        filter: {
-          bool: {
-            must: {}
-          }
-        }
+        filter: {}
+      }
+    });
+  });
+
+  it('should add several filter must queries', () => {
+    const query = QueryBuilder().filter({}).filter({}).built;
+    expect(query).to.eql({
+      bool: {
+        filter: [{}, {}]
       }
     });
   });
@@ -65,12 +105,52 @@ describe('QueryBuilder', () => {
     });
   });
 
+  it('should add multiple filter must not query', () => {
+    const query = QueryBuilder().filterMustNot({}).filterMustNot({}).built;
+    expect(query).to.eql({
+      bool: {
+        filter: {
+          bool: {
+            must_not: [{}, {}]
+          }
+        }
+      }
+    });
+  });
+
   it('should add filter should query', () => {
     const query = QueryBuilder().filterShould({}).built;
     expect(query).to.eql({
       bool: {
         filter: {
           bool: {
+            should: {}
+          }
+        }
+      }
+    });
+  });
+
+  it('should add multiple filter should query', () => {
+    const query = QueryBuilder().filterShould({}).filterShould({}).built;
+    expect(query).to.eql({
+      bool: {
+        filter: {
+          bool: {
+            should: [{}, {}]
+          }
+        }
+      }
+    });
+  });
+
+  it('should add filter must and should query', () => {
+    const query = QueryBuilder().filter({}).filterShould({}).built;
+    expect(query).to.eql({
+      bool: {
+        filter: {
+          bool: {
+            must: {},
             should: {}
           }
         }
@@ -246,41 +326,36 @@ describe('Complex query', () => {
     const boolQuery = BoolQuery().should(Q('range', 'age').gt(20).lt(25)).should(Q('prefix', 'surname', 'Ki'));
     query.filter(boolQuery);
     const builtQuery = query.built;
-    // console.log(require('util').inspect(builtQuery, { depth: null, colors: true }));
     expect(builtQuery).to.eql({
       bool: {
-        filter: {
+        filter: [{
+          terms: {
+            name: {
+              value: ['Kirby', 'Metaknight']
+            }
+          }
+        }, {
+          exists: {
+            field: 'age'
+          }
+        }, {
           bool: {
-            must: [{
-              terms: {
-                name: {
-                  value: ['Kirby', 'Metaknight']
+            should: [{
+              range: {
+                age: {
+                  gt: 20,
+                  lt: 25
                 }
               }
             }, {
-              exists: {
-                field: 'age'
-              }
-            }, {
-              bool: {
-                should: [{
-                  range: {
-                    age: {
-                      gt: 20,
-                      lt: 25
-                    }
-                  }
-                }, {
-                  prefix: {
-                    surname: {
-                      value: 'Ki'
-                    }
-                  }
-                }]
+              prefix: {
+                surname: {
+                  value: 'Ki'
+                }
               }
             }]
           }
-        }
+        }]
       }
     });
   });

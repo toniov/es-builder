@@ -40,4 +40,4 @@ jspm_packages
 .DS_Store
 
 # Transpiled code
-lib/
+lib

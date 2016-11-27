@@ -120,35 +120,15 @@ query.filter(eb.TermQuery('name', 'Kirby'));
 // stringifying the object will give the following result
 // JSON.stringify(query)
 // {
-//   "bool": {
-//     "filter": {
-//       "bool": {
-//         "must": {
-//           "term": {
-//             "name": "Kirby"
-//           }
-//         }
-//       }
-//     }
-//   }
+//  "bool": {
+//    "filter": {
+//      "term": {
+//        "name": "Kirby"
+//      }
+//    }
+//  }
 // }
 ```
-
-NOTE: The above query is quite simple, so using the Query DSL directly it could be written shorter:
-
-```json
-{
-  "bool": {
-    "filter": {
-      "term": {
-        "name": "Kirby"
-      }
-    }
-  }
-}
-```
-
-To Elasticsearch both of them are the same, therefore using this utility, the resultant JSON becomes longer for the sake of keeping the code as simple as possible.
 
 ## Shortcut for leaf query clauses
 

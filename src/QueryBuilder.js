@@ -21,11 +21,14 @@ class QueryBuilder {
    * @return completed query
    */
   [_build] () {
-    const completeQuery = this[_boolQuery].built;
-    // add filter clause only in case filters were added
-    const filterBool = this[_boolQueryForFilter].built;
+    let completeQuery = this[_boolQuery].built;
+    let filterBool = this[_boolQueryForFilter].built;
     if (Object.keys(filterBool.bool).length > 0) {
-      completeQuery.bool.filter = filterBool;
+      // add filter clause only in case filters were added
+      completeQuery.bool.filter = Object.keys(filterBool.bool).length === 1 && filterBool.bool.must ? filterBool.bool.must : filterBool;
+    } else if (Object.keys(completeQuery.bool).length === 1 && Object.keys(completeQuery.bool.must || []).length === 1) {
+      // if the bool query only contains must and must only have one clause it is abbreviated
+      completeQuery = completeQuery.bool.must;
     }
     return completeQuery;
   }
