@@ -25,6 +25,6 @@ replServer.context.eb = eb;
 replServer.context.QueryBuilder = eb.QueryBuilder;
 replServer.context.BoolQuery = eb.BoolQuery;
 // expose all the leaf-queries
-fs.readdirSync(path.join(__dirname, '..', 'src', 'leaf-queries')).forEach((file) => {
-  replServer.context[file.slice(0, -3)] = require(`../src/leaf-queries/${file}`);
+fs.readdirSync(path.join(__dirname, '..', 'lib', 'leaf-queries')).forEach((file) => {
+  replServer.context[file.slice(0, -3)] = require(`../lib/leaf-queries/${file}`);
 });

@@ -1,6 +1,6 @@
 {
   "name": "es-builder",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Elasticsearch query builder for Node.js",
   "main": "lib/index.js",
   "bin": {
