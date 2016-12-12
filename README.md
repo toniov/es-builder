@@ -88,7 +88,7 @@ client.search({
 
 ## Used as a global module (REPL)
 
-All the query classes has been exposed to the REPL so they can be called directly.
+All the query classes have been exposed to the REPL so they can be called directly.
 
 ```zsh
 $ es-builder
@@ -101,7 +101,7 @@ es-builder> query.stringified
 es-builder> .exit
 ```
 
-Copy the result above and paste it in your curl search request
+Copy the result above and paste it in your curl search request:
 
 ```zsh
 $ curl -XGET 'http://localhost:9200/games/dreamland/_search' -d'
@@ -132,7 +132,7 @@ query.filter(eb.TermQuery('name', 'Kirby'));
 
 ## Shortcut for leaf query clauses
 
-There is a shortcut available for leaf query clauses when used as a local module, inspired by [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py)
+There is a shortcut available for leaf query clauses when used as a local module, inspired by [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py):
 
 ```js
 const Q = eb.Q;
