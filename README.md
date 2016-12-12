@@ -44,7 +44,7 @@ var client = new elasticsearch.Client({
   log: 'trace'
 });
 
-const query = QueryBuilder()
+const query = eb.QueryBuilder()
   .query(eb.TermQuery('name', 'Kirby'))
   .query(eb.MatchQuery('description', 'Pink, fluffy and very hungry'))
   .queryMustNot(eb.TermQuery('name', 'Waddle Dee'));
