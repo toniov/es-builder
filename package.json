@@ -11,10 +11,11 @@
   },
   "scripts": {
     "test": "mocha test/src/index.js",
-    "test-transpilled": "mocha test/lib/index.js",
+    "test-transpiled": "mocha test/lib/index.js",
     "build": "babel src -d lib && babel test/src -d test/lib",
     "prepublish": "npm run build && npm run test-transpilled",
-    "clean": "rm -rf lib && rm -rf test/lib"
+    "clean": "rm -rf lib && rm -rf test/lib",
+    "prepublish": "npm run build && npm run test-transpiled"
   },
   "keywords": [
     "Elasticsearch",
