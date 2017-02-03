@@ -72,7 +72,7 @@ const query = eb.QueryBuilder()
 //   }
 // }
 
-// but the created query can be passed like that, since the Elasticsearch client will stringify it internally after
+// but the created query can be passed without doing stringify, since the Elasticsearch client will stringify it internally after
 client.search({
   index: 'games',
   type: 'dreamland',

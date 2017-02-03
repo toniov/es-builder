@@ -14,8 +14,7 @@
     "test-transpiled": "mocha test/lib/index.js",
     "build": "babel src -d lib && babel test/src -d test/lib",
     "prepublish": "npm run build && npm run test-transpilled",
-    "clean": "rm -rf lib && rm -rf test/lib",
-    "prepublish": "npm run build && npm run test-transpiled"
+    "clean": "rm -rf lib && rm -rf test/lib"
   },
   "keywords": [
     "Elasticsearch",
