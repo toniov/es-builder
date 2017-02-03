@@ -9,7 +9,7 @@ class BoolQuery {
   /**
    * Create a bool query
    */
-  constructor() {
+  constructor () {
     this[_boolQuery] = {};
   }
 
@@ -115,10 +115,10 @@ class BoolQuery {
   or (query) {
     return this.should(query);
   }
-};
+}
 
 const factoryBoolQuery = () => {
-  return new BoolQuery;
+  return new BoolQuery();
 };
 // also expose statically the original class
 factoryBoolQuery._originalClass = BoolQuery;

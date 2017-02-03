@@ -8,7 +8,7 @@ class PrefixQuery extends Mixins {
    * @param {string} field
    * @param {string|number|Date} value
    */
-  constructor(field, value) {
+  constructor (field, value) {
     super('prefix', field);
 
     this.prefix = {
@@ -17,7 +17,7 @@ class PrefixQuery extends Mixins {
       }
     };
   }
-};
+}
 
 const factoryPrefixQuery = (...args) => {
   return new PrefixQuery(...args);

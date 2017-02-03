@@ -8,7 +8,7 @@ class TermQuery extends Mixins {
    * @param {string} field
    * @param {string|number|Date} value
    */
-  constructor(field, value) {
+  constructor (field, value) {
     super('term', field);
 
     this.term = {
@@ -17,7 +17,7 @@ class TermQuery extends Mixins {
       }
     };
   }
-};
+}
 
 const factoryTermQuery = (...args) => {
   return new TermQuery(...args);

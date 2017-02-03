@@ -157,10 +157,10 @@ class QueryBuilder {
   filterOr (query) {
     return this.filterShould(query);
   }
-};
+}
 
 const factoryQueryBuilder = () => {
-  return new QueryBuilder;
+  return new QueryBuilder();
 };
 // also expose statically the original class
 factoryQueryBuilder._originalClass = QueryBuilder;

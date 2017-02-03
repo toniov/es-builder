@@ -9,7 +9,7 @@ class MatchQuery extends Mixins {
    * @param {string} text
    * @param {Object} [extraOps]
    */
-  constructor(field, text, extraOps) {
+  constructor (field, text, extraOps) {
     super('match', field);
 
     this.match = {
@@ -19,7 +19,7 @@ class MatchQuery extends Mixins {
     };
     Object.assign(this.match[field], extraOps);
   }
-};
+}
 
 const factoryMatchQuery = (...args) => {
   return new MatchQuery(...args);

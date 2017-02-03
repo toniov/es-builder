@@ -8,7 +8,7 @@ class RangeQuery extends Mixins {
    * Create range query
    * @param {string} field
    */
-  constructor(field) {
+  constructor (field) {
     super('range', field);
 
     this.range = {
@@ -56,7 +56,7 @@ class RangeQuery extends Mixins {
     this.range[field].lt = value;
     return this;
   }
-};
+}
 
 const factoryRangeQuery = (...args) => {
   return new RangeQuery(...args);

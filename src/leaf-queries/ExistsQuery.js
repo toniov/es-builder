@@ -7,14 +7,14 @@ class ExistsQuery extends Mixins {
    * Create exists query
    * @param {string} field
    */
-  constructor(field) {
+  constructor (field) {
     super('exists', field);
 
     this.exists = {
       field: field
     };
   }
-};
+}
 
 const factoryExistsQuery = (...args) => {
   return new ExistsQuery(...args);
