@@ -323,7 +323,8 @@ describe('BoolQuery', () => {
 
 describe('FunctionScoreQuery', () => {
   it('should build function score query', () => {
-    const fsc = FunctionScoreQuery().boost(5);
+    const fsc = FunctionScoreQuery();
+    fsc.boost(5);
     fsc.boostMode('multiply');
     fsc.maxBoost(42);
     fsc.query(qb.MatchQuery('description', 'Pink, fluffy and very hungry'));
@@ -340,8 +341,8 @@ describe('FunctionScoreQuery', () => {
     {
       random_score: {}
     }]);
-    expect(fsc.built).to.eql({ 
-      function_score: { 
+    expect(fsc.built).to.eql({
+      function_score: {
         boost: 5,
         boost_mode: 'multiply',
         max_boost: 42,
