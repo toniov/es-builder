@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const qb = require('../../src');
 const QueryBuilder = qb.QueryBuilder;
 const BoolQuery = qb.BoolQuery;
+const FunctionScoreQuery = qb.FunctionScoreQuery;
 const Q = qb.Q;
 
 describe('QueryBuilder', () => {
@@ -317,6 +318,53 @@ describe('BoolQuery', () => {
     query = BoolQuery().should({});
     queryAlias = BoolQuery().or({});
     expect(JSON.stringify(query)).to.eql(JSON.stringify(queryAlias));
+  });
+});
+
+describe('FunctionScoreQuery', () => {
+  it('should build function score query', () => {
+    const fsc = FunctionScoreQuery().boost(5);
+    fsc.boostMode('multiply');
+    fsc.maxBoost(42);
+    fsc.query(qb.MatchQuery('description', 'Pink, fluffy and very hungry'));
+    fsc.scoreMode('max');
+    fsc.minScore(42);
+    fsc.functions({
+      filter: { match: { test: 'bar' } },
+      weight: 23
+    });
+    fsc.functions([{
+      filter: { match: { test: 'cat' } },
+      weight: 42
+    },
+    {
+      random_score: {}
+    }]);
+    expect(fsc.built).to.eql({ 
+      function_score: { 
+        boost: 5,
+        boost_mode: 'multiply',
+        max_boost: 42,
+        query: { match: { description: { query: 'Pink, fluffy and very hungry' } } },
+        score_mode: 'max',
+        min_score: 42,
+        functions: [{
+          filter: {
+            match: { test: 'bar' }
+          },
+          weight: 23
+        },
+        {
+          filter: {
+            match: { test: 'cat' }
+          },
+          weight: 42
+        },
+        {
+          random_score: {}
+        }]
+      }
+    });
   });
 });
 

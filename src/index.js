@@ -3,6 +3,7 @@
 // expose objects
 exports.QueryBuilder = require('./QueryBuilder');
 exports.BoolQuery = require('./BoolQuery');
+exports.FunctionScoreQuery = require('./FunctionScoreQuery');
 exports.TermQuery = require('./leaf-queries/TermQuery');
 exports.TermsQuery = require('./leaf-queries/TermsQuery');
 exports.RangeQuery = require('./leaf-queries/RangeQuery');
