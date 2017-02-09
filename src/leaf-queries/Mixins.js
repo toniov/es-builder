@@ -21,7 +21,7 @@ module.exports = class Mixins {
   boost (score) {
     const queryType = this[_queryType];
     const field = this[_field];
-    if (queryType === 'exists') {
+    if (queryType === 'exists' || queryType === 'terms') {
       this[queryType].boost = score;
       return this;
     }

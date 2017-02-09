@@ -216,12 +216,12 @@ describe('TermQuery', () => {
 describe('TermsQuery', () => {
   it('should create terms query', () => {
     const query = qb.TermsQuery('name', ['Kirby', 'Metaknight']);
-    expect(JSON.stringify(query)).to.eql('{"terms":{"name":{"value":["Kirby","Metaknight"]}}}');
+    expect(JSON.stringify(query)).to.eql('{"terms":{"name":["Kirby","Metaknight"]}}');
   });
 
   it('should add boost parameter', () => {
     const query = qb.TermsQuery('name', ['Kirby', 'Metaknight']).boost(3);
-    expect(JSON.stringify(query)).to.eql('{"terms":{"name":{"value":["Kirby","Metaknight"],"boost":3}}}');
+    expect(JSON.stringify(query)).to.eql('{"terms":{"name":["Kirby","Metaknight"],"boost":3}}');
   });
 });
 
@@ -379,9 +379,7 @@ describe('Complex query', () => {
       bool: {
         filter: [{
           terms: {
-            name: {
-              value: ['Kirby', 'Metaknight']
-            }
+            name: ['Kirby', 'Metaknight']
           }
         }, {
           exists: {
