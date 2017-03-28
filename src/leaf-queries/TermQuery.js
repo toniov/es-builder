@@ -12,9 +12,7 @@ class TermQuery extends Mixins {
     super('term', field);
 
     this.term = {
-      [field]: {
-        value: value
-      }
+      [field]: value
     };
   }
 }
