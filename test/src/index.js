@@ -204,12 +204,12 @@ describe('MatchQuery', () => {
 describe('TermQuery', () => {
   it('should create term query', () => {
     const query = qb.TermQuery('name', 'Kirby');
-    expect(JSON.stringify(query)).to.eql('{"term":{"name":{"value":"Kirby"}}}');
+    expect(JSON.stringify(query)).to.eql('{"term":{"name":"Kirby"}}');
   });
 
   it('should add boost parameter', () => {
     const query = qb.TermQuery('name', 'Kirby').boost(3);
-    expect(JSON.stringify(query)).to.eql('{"term":{"name":{"value":"Kirby","boost":3}}}');
+    expect(JSON.stringify(query)).to.eql('{"term":{"name":"Kirby","boost":3}}');
   });
 });
 
