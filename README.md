@@ -1,6 +1,6 @@
 # Elasticsearch Query Builder
 
-[![Build Status](https://travis-ci.org/antonvs2/es-builder.svg?branch=master)](https://travis-ci.org/antonvs2/es-builder)
+[![Build Status](https://travis-ci.org/toniov/es-builder.svg?branch=master)](https://travis-ci.org/toniov/es-builder)
 
 Elasticsearch query builder for Node.js, build compatible queries with the Elasticsearch 2.x DSL. Because creating complex queries using the Query DSL is a pain.
 
